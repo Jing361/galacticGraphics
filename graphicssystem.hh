@@ -1,6 +1,7 @@
 #ifndef __GRAPHICSSYSTEM_HH__
 #define __GRAPHICSSYSTEM_HH__
 
+#include<string>
 #include"resourcemanager.hh"
 
 template<class T>
@@ -28,10 +29,7 @@ class GraphicsCamera{
 template<typename SYSTEM>
 class GraphicsShader{
 public:
-  GraphicsShader(std::string vertexFile, std::string fragmentFile){
-    (void)vertexFile;
-    (void)fragmentFile;
-  }
+  GraphicsShader(std::string vertexFile, std::string fragmentFile);
   
   void operator()();
 };
