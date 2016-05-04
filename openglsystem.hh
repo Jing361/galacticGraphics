@@ -47,7 +47,7 @@ private:
   GLuint mProgram;
 
   std::string vLoadShader(const char* fileName);
-  void vAttach(GLuint shade, const GLchar* path);
+  void vAttach(GLuint shade, std::basic_string<GLChar> path);
 
 public:
   GraphicsShader(std::string vertexFile, std::string fragmentFile);
@@ -56,8 +56,8 @@ public:
 };
 
 template<>
-std::string GraphicsSystem<OpenGL>::vLoadShader(const char* fileName){
-  std::string source;
+std::basic_string<GLChar> GraphicsSystem<OpenGL>::vLoadShader(std::string fileName){
+  std::basic_string<GLChar> source;
   std::string line;
   std::ifstream file(fileName);
   
@@ -69,12 +69,10 @@ std::string GraphicsSystem<OpenGL>::vLoadShader(const char* fileName){
 }
 
 template<>
-void GraphicsShader<OpenGL>::vAttach(GLuint shade, const GLchar* path){
+void GraphicsShader<OpenGL>::vAttach(GLuint shade, std::basic_string<GLChar> source){
   GLint success;
-  std::string source = loadShader(path);
-  const GLchar* ss = source.c_str();
 
-  glShaderSource(shade, 1, &ss, NULL);
+  glShaderSource(shade, 1, &source.c_str(), NULL);
   glCompileShader(shade);
   
   glGetShaderiv(shade, GL_COMPILE_STATUS, &success);
@@ -88,14 +86,15 @@ void GraphicsShader<OpenGL>::vAttach(GLuint shade, const GLchar* path){
 }
 
 template<>
-GraphicsShader<OpenGL>::GraphicsShader(std::string vertexFile, std::string fragmentFile):
+GraphicsShader<OpenGL>::GraphicsShader(std::string vertexPath,
+                                       std::string fragmentPath):
   mProgram(glCreateProgram()){
   GLint success;
-  GLuint vertexSource = glCreateShader(GL_VERTEX_SHADER);
-  GLuint fragmentSource = glCreateShader(GL_FRAGMENT_SHADER);
+  GLuint vertexID =   glCreateShader(GL_VERTEX_SHADER);
+  GLuint fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
 
-  attach(vertexSource, vertexPath);
-  attach(fragmentSource, fragmentPath);
+  attach(vertexID,   vLoadShader(vertexPath));
+  attach(fragmentID, vLoadShader(fragmentPath));
 
   glLinkProgram(m_program);
   glGetProgramiv(m_program, GL_LINK_STATUS, &success);
@@ -105,8 +104,8 @@ GraphicsShader<OpenGL>::GraphicsShader(std::string vertexFile, std::string fragm
     std::cerr << "ERROR:SHADER:PROGRAM:LINKING_FAILED\n" << infoLog << std::endl;
   }
   
-  glDeleteShader(vertexSource);
-  glDeleteShader(fragmentSource);
+  glDeleteShader(vertexID);
+  glDeleteShader(fragmentID);
 }
 
 template<>
