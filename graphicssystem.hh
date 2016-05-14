@@ -6,6 +6,7 @@
 #include<memory>
 #include<bitset>
 #include"resourcemanager.hh"
+#include"scenemanager.hh"
 
 template<class T>
 struct Engine{
@@ -57,6 +58,7 @@ public:
   typedef GraphicsLight<ENGINE>    light;
   typedef GraphicsMesh<ENIGNE>     mesh;
   typedef GraphicsMaterial<ENIGNE> material;
+  typedef scenemanager<ENGINE>     scenemanager;
 };
 
 template<typename ENIGNE, class TRAITS = GraphicsTraits<ENIGNE> >
@@ -69,16 +71,19 @@ public:
   typedef typename TRAITS::light  light;
   typedef ResourceManager<typename TRAITS::mesh> meshManager;
   typedef ResourceManager<typename TRAITS::material> materialManager;
+  typedef TRAITS::scenemanager scenemanager;
 
 private:
   meshManager mMeshes;
   materialManager mMaterials;
   std::map<std::string, std::shared_ptr<entity> > mEntities;
   std::map<std::string, std::shared_ptr<light> > mLights;
+  scenemanager scene;
   std::bitset<1024> mKeys;
   unsigned int mFOV;
 
 public:
+  scenemanager& getManager();
   void foo();
 };
 

@@ -37,6 +37,11 @@ public:
 };
 
 template<>
+scenemanager& OpenGLSystem::getManager(){
+  return scene;
+}
+
+template<>
 void OpenGLSystem::foo(){
   std::cout << OpenGLSystem::system::name << std::endl;
 }
