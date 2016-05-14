@@ -4,6 +4,7 @@
 #include<string>
 #include<map>
 #include<memory>
+#include<bitset>
 #include"resourcemanager.hh"
 
 template<class T>
@@ -53,9 +54,9 @@ public:
   typedef GraphicsShader<ENIGNE>   shader;
   typedef GraphicsEntity<ENIGNE>   entity;
   typedef GraphicsCamera<ENIGNE>   camera;
+  typedef GraphicsLight<ENGINE>    light;
   typedef GraphicsMesh<ENIGNE>     mesh;
   typedef GraphicsMaterial<ENIGNE> material;
-  typedef GraphicsLight<ENGINE>    light;
 };
 
 template<typename ENIGNE, class TRAITS = GraphicsTraits<ENIGNE> >
@@ -74,6 +75,8 @@ private:
   materialManager mMaterials;
   std::map<std::string, std::shared_ptr<entity> > mEntities;
   std::map<std::string, std::shared_ptr<light> > mLights;
+  std::bitset<1024> mKeys;
+  unsigned int mFOV;
 
 public:
   void foo();
