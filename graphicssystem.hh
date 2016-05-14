@@ -2,6 +2,8 @@
 #define __GRAPHICSSYSTEM_HH__
 
 #include<string>
+#include<map>
+#include<memory>
 #include"resourcemanager.hh"
 
 template<class T>
@@ -10,23 +12,23 @@ struct Engine{
   static const unsigned int version;
 };
 
-template<typename SYSTEM>
+template<typename ENIGNE>
 class GraphicsMaterial{
 };
 
-template<typename SYSTEM>
+template<typename ENIGNE>
 class GraphicsMesh{
 };
 
-template<typename SYSTEM>
-class GraphicsModel{
+template<typename ENIGNE>
+class GraphicsEntity{
 };
 
-template<typename SYSTEM>
+template<typename ENIGNE>
 class GraphicsCamera{
 };
 
-template<typename SYSTEM>
+template<typename ENIGNE>
 class GraphicsShader{
 public:
   GraphicsShader(std::string vertexFile, std::string fragmentFile);
@@ -34,29 +36,44 @@ public:
   void operator()();
 };
 
-template<typename SYSTEM>
-class GraphicsTraits{
+template<typename ENIGNE>
+class GraphicsEntity{
 public:
-  typedef GraphicsShader<SYSTEM>   shader;
-  typedef GraphicsModel<SYSTEM>    model;
-  typedef GraphicsCamera<SYSTEM>   camera;
-  typedef GraphicsMesh<SYSTEM>     mesh;
-  typedef GraphicsMaterial<SYSTEM> material;
+  typedef GraphicsMaterial<ENGINE> material;
+  typedef GraphicsMesh<ENGINE> mesh;
 };
 
-template<typename SYSTEM, class TRAITS = GraphicsTraits<SYSTEM> >
+template<typename ENGINE>
+class GraphicsLight{
+};
+
+template<typename ENIGNE>
+class GraphicsTraits{
+public:
+  typedef GraphicsShader<ENIGNE>   shader;
+  typedef GraphicsEntity<ENIGNE>   entity;
+  typedef GraphicsCamera<ENIGNE>   camera;
+  typedef GraphicsMesh<ENIGNE>     mesh;
+  typedef GraphicsMaterial<ENIGNE> material;
+  typedef GraphicsLight<ENGINE>    light;
+};
+
+template<typename ENIGNE, class TRAITS = GraphicsTraits<ENIGNE> >
 class GraphicsSystem{
 public:
-  typedef SYSTEM system;
+  typedef ENIGNE engine;
   typedef typename TRAITS::shader shader;
-  typedef typename TRAITS::model  model;
+  typedef typename TRAITS::entity entity;
   typedef typename TRAITS::camera camera;
+  typedef typename TRAITS::light  light;
   typedef ResourceManager<typename TRAITS::mesh> meshManager;
   typedef ResourceManager<typename TRAITS::material> materialManager;
 
 private:
   meshManager mMeshes;
   materialManager mMaterials;
+  std::map<std::string, std::shared_ptr<entity> > mEntities;
+  std::map<std::string, std::shared_ptr<light> > mLights;
 
 public:
   void foo();

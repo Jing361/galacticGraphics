@@ -56,6 +56,13 @@ public:
 };
 
 template<>
+class GraphicsEntity<OpenGL>{
+public:
+  typedef GraphicsMaterial<OpenGL> material;
+  typedef GraphicsMesh<OpenGL> mesh;
+};
+
+template<>
 std::basic_string<GLChar> GraphicsSystem<OpenGL>::vLoadShader(std::string fileName){
   std::basic_string<GLChar> source;
   std::string line;
