@@ -6,6 +6,7 @@
 #include<fstream>
 #include<exception>
 #include"graphicssystem.hh"
+#include"resourcemanager.hh"
 
 typedef unsigned int GLuint;
 typedef int GLint;
@@ -39,18 +40,94 @@ public:
   float mShininess;
 };
 
+template<typename REF = std::string>
+void resourcemanager<GraphicsMesh<OpenGL> >::acquire(const REF& name, const std::string& fileName){
+  type mesh;
+  std::vector<GLfloat> verts;
+  
+  size_t dot = fileName.rfind('.');
+  std::string type(fileName.substr(dot));
+  if(type == "obj"){
+    verts = fileLoader::objLoader(fileName);
+  } else if(type == "flat"){
+    verts = fileLoader::flatLoader(fileName);
+  }
+  mesh.mNVert = verts.size();
+  
+  glGenBuffers(1, &mesh.mVbo);
+  
+  glBindBuffer(GL_ARRAY_BUFFER, mesh.mVbo);
+  glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(GLfloat), verts.data(), GL_STATIC_DRAW);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  
+  mResources[name] = mesh;
+}
+
+//this function does not belong here.
+//  it should be attached to the resource manager
+//  but only the mat manager
+GLint acquireTexture(const std::string& file){
+  GLuint tex;
+  unsigned char* image;
+  int width, height;
+  
+  glGenTextures(1, &tex);
+  glBindTexture(GL_TEXTURE_2D, tex);
+  
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  
+  image = SOIL_load_image(file.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+  glGenerateMipmap(GL_TEXTURE_2D);
+  SOIL_free_image_data(image);
+  
+  glBindTexture(GL_TEXTURE_2D, 0);
+  
+  return tex;
+}
+
+template<typename REF = std::string>
+void resourcemanager<GraphicsMaterial<OpenGL> >::acquire(const REF& name, const std::string& fileName){
+  type material;
+
+  size_t dot = fileName.rfind('.');
+  std::string title(fileName.substr(0, dot));
+  std::string type(fileName.substr(dot));
+  std::string diffName = title + "_diffuse." + type;
+  std::string specName = title + "_specular." + type;
+  
+  if(checkFile(diffName)){
+    material.m_diffMap = acquireTexture(diffName);
+  } else {
+    //require at least diffuse map
+    throw invalideFileNameException("Invalid file name.  Valid diffuse map required.");
+  }
+  //specular map not required
+  if(checkFile(specName)){
+    material.m_specMap = acquireTexture(specName);
+  } else {
+    material.m_specMap = -1;
+  }
+
+  mResources[name] = material;
+}
+
 template<>
 scenemanager& OpenGLSystem::getManager(const std::string& name){
   return mScenes[name];
 }
 
 template<>
-void setMainScene(const std::string& name){
+void OpenGLSystem::setMainScene(const std::string& name){
   mMainSceneName = name;
 }
 
 template<>
-bool renderScene(const std::string& name){
+bool OpenGLSystem::renderScene(const std::string& name){
   bool ret;
   try{
     mScenes.at(name).render();
@@ -62,7 +139,7 @@ bool renderScene(const std::string& name){
 }
 
 template<>
-bool renderMainScene(){
+bool OpenGLSystem::renderMainScene(){
   return renderScene(mMainSceneName);
 }
 

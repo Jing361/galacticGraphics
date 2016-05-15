@@ -6,6 +6,9 @@
 
 template<typename RESOURCE, typename REF = std::string>
 class resourcemanager{
+public:
+  typedef RESOURCE type;
+
 private:
   std::map<REF, RESOURCE> mResources;
 

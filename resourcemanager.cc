@@ -3,7 +3,11 @@
 #include<exception>
 #include"resourcemanager.hh"
 
-bool resourceManager::checkFile(const std::string& fileName){
+resourcemanager::~resourcemanager(){
+}
+
+template<typename RESOURCE, typename REF = std::string>
+bool resourcemanager<RESOURCE, REF>::checkFile(const std::string& fileName){
   std::ifstream file(fileName);
   bool ret = file;
   
