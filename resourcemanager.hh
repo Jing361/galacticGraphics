@@ -5,13 +5,17 @@
 #include<map>
 
 template<typename RESOURCE, typename REF = std::string>
-class ResourceManager{
+class resourcemanager{
 private:
   std::map<REF, RESOURCE> mResources;
 
+  bool checkFile(const std::string& fileName);
+
 public:
-  void acquire(REF name, std::string fileName);
-  RESOURCE getResource(REF name){ return mResources[name]; }
+  virtual ~resourcemanager();
+  //acquire method must be implemented per resource and per engine
+  void acquire(const REF& name, const std::string& fileName);
+  RESOURCE& getResource(const REF& name);
 };
 
 #endif

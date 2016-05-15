@@ -77,12 +77,14 @@ template<typename ENIGNE, class TRAITS = GraphicsTraits<ENIGNE> >
 class GraphicsSystem{
 public:
   typedef ENIGNE engine;
-  typedef typename TRAITS::shader shader;
-  typedef typename TRAITS::entity entity;
-  typedef typename TRAITS::camera camera;
-  typedef typename TRAITS::light  light;
-  typedef ResourceManager<typename TRAITS::mesh> meshManager;
-  typedef ResourceManager<typename TRAITS::material> materialManager;
+  typedef typename TRAITS::shader   shader;
+  typedef typename TRAITS::entity   entity;
+  typedef typename TRAITS::camera   camera;
+  typedef typename TRAITS::light    light;
+  typedef typename TRAITS::mesh     mesh;
+  typedef typename TRAITS::material material;
+  typedef ResourceManager<mesh> meshManager;
+  typedef ResourceManager<material> materialManager;
   typedef TRAITS::scenemanager scenemanager;
 
 private:
