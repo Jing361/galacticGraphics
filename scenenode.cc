@@ -5,8 +5,8 @@ scenenode::scenenode(scenenode* pNode = nullptr):
   mParent(pNode){
 }
 
-scenenode* scenenode::createChild(){
-  return new scenenode(this);
+std::shared_ptr<scenenode> scenenode::createChild(){
+  return std::shared_ptr<scenenode>(new scenenode(this));
 }
 
 void scenenode::setPosition(glm::vec3 pPosition){
@@ -15,6 +15,14 @@ void scenenode::setPosition(glm::vec3 pPosition){
 
 void scenenode::translate(double x, double y, double z){
   mTransform = glm::translate(mTransform, glm::vec3(x, y, z));
+}
+
+void scenenode::rotate(double x, double y, double z){
+  mTransform = glm::rotate(mTransform, glm::vec3(x, y, z));
+}
+
+void scenenode::scale(double x, double y, double z){
+  mTransform = glm::scale(mTransform, glm::vec3(x, y, z));
 }
 
 void scenenode::attachObject(entity* pEnt, GLuint shader){

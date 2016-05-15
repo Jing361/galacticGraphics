@@ -20,10 +20,22 @@ class GraphicsMaterial{
 
 template<typename ENIGNE>
 class GraphicsMesh{
+private:
+  unsigned int mNVert;
+  bool mHasNormal;
+  bool mHasColor;
 };
 
 template<typename ENIGNE>
 class GraphicsEntity{
+public:
+  typedef GraphicsMaterial<ENGINE> material;
+  typedef GraphicsMesh<ENGINE>     mesh;
+
+private:
+  material mMaterial
+  mesh mMesh;
+  std::shared_ptr<scenenode> mParent;
 };
 
 template<typename ENIGNE>
@@ -78,12 +90,16 @@ private:
   materialManager mMaterials;
   std::map<std::string, std::shared_ptr<entity> > mEntities;
   std::map<std::string, std::shared_ptr<light> > mLights;
-  scenemanager scene;
+  std::map<std::string, scenemanager> mScenes;
+  std::string mMainSceneName;
   std::bitset<1024> mKeys;
   unsigned int mFOV;
 
 public:
-  scenemanager& getManager();
+  scenemanager& getManager(const std::string& name);
+  void setMainScene(const std::string& name);
+  bool renderScene(const std::string& name);
+  bool renderMainScene();
   void foo();
 };
 

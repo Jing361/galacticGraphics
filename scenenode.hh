@@ -1,6 +1,7 @@
 #ifndef __SCENE_NODE_HH__
 #define __SCENE_NODE_HH__
 
+#include<memory>
 #include<glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/gtc/type_ptr.hpp>
@@ -16,10 +17,11 @@ private:
 public:
   scenenode(scenenode* pNode = nullptr);
   
-  //can't clean up child? :o
-  scenenode* createChild();
+  std::shared_ptr<scenenode> createChild();
   void setPosition(glm::vec3 pPosition);
   void translate(double x, double y, double z);
+  void rotate(double x, double y, double z);
+  void scale(double x, double y, double z);
   
   virtual void attachObject(entity* pEnt, GLuint shader);
   virtual void attachLight(light* pLight, GLuint shader);

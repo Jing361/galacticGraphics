@@ -4,6 +4,7 @@
 #include<gl3w.h>
 #include<string>
 #include<fstream>
+#include<exception>
 #include"graphicssystem.hh"
 
 typedef unsigned int GLuint;
@@ -25,7 +26,9 @@ template<>
 class GraphicsMesh<OpenGL>{
 public:
   GLuint mVbo;
-  int mNVert;
+  unsigned int mNVert;
+  bool mHasNormal;
+  bool mHasColor;
 };
 
 template<>
@@ -37,8 +40,30 @@ public:
 };
 
 template<>
-scenemanager& OpenGLSystem::getManager(){
-  return scene;
+scenemanager& OpenGLSystem::getManager(const std::string& name){
+  return mScenes[name];
+}
+
+template<>
+void setMainScene(const std::string& name){
+  mMainSceneName = name;
+}
+
+template<>
+bool renderScene(const std::string& name){
+  bool ret;
+  try{
+    mScenes.at(name).render();
+    ret = true;
+  } catch(std::exception& e){
+    ret = false;
+  }
+  return ret;
+}
+
+template<>
+bool renderMainScene(){
+  return renderScene(mMainSceneName);
 }
 
 template<>
@@ -64,7 +89,18 @@ template<>
 class GraphicsEntity<OpenGL>{
 public:
   typedef GraphicsMaterial<OpenGL> material;
-  typedef GraphicsMesh<OpenGL> mesh;
+  typedef GraphicsMesh<OpenGL>     mesh;
+
+private:
+  GLuint mVao;
+  material mMaterial;
+  mesh mMesh;
+  std::shared_ptr<scenenode> mParent;
+
+public:
+  GraphicsEntity(mesh mes, material mat);
+
+  void render(GraphicsShader<OpenGL> shader);
 };
 
 template<>
