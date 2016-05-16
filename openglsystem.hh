@@ -116,8 +116,18 @@ void resourcemanager<GraphicsMaterial<OpenGL> >::acquire(const REF& name, const 
 }
 
 template<>
-scenemanager& OpenGLSystem::getManager(const std::string& name){
+scenemanager& OpenGLSystem::getSceneManager(const std::string& name){
   return mScenes[name];
+}
+
+template<>
+ResourceManager<mesh>& OpenGLSystem::getResourceManager(){
+  return mMeshes;
+}
+
+template<>
+ResourceManager<material>& OpenGLSystem::getResourceManager(){
+  return mMaterials;
 }
 
 template<>
