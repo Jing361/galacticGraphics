@@ -22,11 +22,11 @@ private:
       mManager(pManager){
     }
     
-    void attachObject(entity* pEnt, GLuint shader){
+    void attachObject(std::shared_ptr<entity> pEnt, GLuint shader){
       mManager.attachObject(pEnt, shader);
     }
     
-    void attachLight(light* pLight, GLuint shader){
+    void attachLight(std::shared_ptr<light> pLight, GLuint shader){
       mManager.attachLight(pLight, shader);
     }
   };

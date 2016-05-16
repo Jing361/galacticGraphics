@@ -25,7 +25,7 @@ public:
   void rotate(double x, double y, double z);
   void scale(double x, double y, double z);
   
-  virtual void attachEntity(entity* pEnt, GLuint shader);
+  virtual void attachEntity(std::shared_ptr<entity> pEnt, GLuint shader);
   virtual void attachLight(light* pLight, GLuint shader);
   glm::mat4 getTransform();
 };

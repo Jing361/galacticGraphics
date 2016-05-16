@@ -35,7 +35,7 @@ public:
 private:
   material mMaterial
   mesh mMesh;
-  std::shared_ptr<scenenode> mParent;
+  std::weak_ptr<scenenode> mParent;
 };
 
 template<typename ENIGNE>

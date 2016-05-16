@@ -22,7 +22,7 @@ void scenenode<SYSTEM>::scale(double x, double y, double z){
 }
 
 template<typename SYSTEM>
-void scenenode<SYSTEM>::attachEntity(entity* pEnt, GLuint shader){
+void scenenode<SYSTEM>::attachEntity(std::shared_ptr<entity> pEnt, GLuint shader){
   if(mParent){
     mParent->attachEntity(pEnt, shader);
   }
@@ -32,7 +32,7 @@ void scenenode<SYSTEM>::attachEntity(entity* pEnt, GLuint shader){
 }
 
 template<typename SYSTEM>
-void scenenode<SYSTEM>::attachLight(light* pLight, GLuint shader){
+void scenenode<SYSTEM>::attachLight(std::shared_ptr<light> pLight, GLuint shader){
   if(mParent){
     mParent->attachLight(pLight, shader);
   }

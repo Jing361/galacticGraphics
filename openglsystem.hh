@@ -186,7 +186,7 @@ private:
   GLuint mVao;
   material mMaterial;
   mesh mMesh;
-  std::shared_ptr<scenenode> mParent;
+  std::weak_ptr<scenenode> mParent;
 
 public:
   GraphicsEntity(mesh mes, material mat);
