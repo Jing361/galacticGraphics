@@ -1,63 +1,47 @@
 #include"entity.hh"
 #include"scenenode.hh"
 
-scenenode::scenenode(scenenode* pNode = nullptr):
-  mParent(pNode){
+template<typename SYSTEM> 
+std::shared_ptr<scenenode> scenenode<SYSTEM>::createChild(){
+  return std::shared_ptr<scenenode>(new scenenode<SYSTEM>(this));
 }
 
-std::shared_ptr<scenenode> scenenode::createChild(){
-  return std::shared_ptr<scenenode>(new scenenode(this));
-}
-
-void scenenode::setPosition(glm::vec3 pPosition){
-  mTransform = glm::translate(mTransform, pPosition - mPosition);
-}
-
-void scenenode::translate(double x, double y, double z){
+template<typename SYSTEM>
+void scenenode<SYSTEM>::translate(double x, double y, double z){
   mTransform = glm::translate(mTransform, glm::vec3(x, y, z));
 }
 
-void scenenode::rotate(double x, double y, double z){
+template<typename SYSTEM>
+void scenenode<SYSTEM>::rotate(double x, double y, double z){
   mTransform = glm::rotate(mTransform, glm::vec3(x, y, z));
 }
 
-void scenenode::scale(double x, double y, double z){
+template<typename SYSTEM>
+void scenenode<SYSTEM>::scale(double x, double y, double z){
   mTransform = glm::scale(mTransform, glm::vec3(x, y, z));
 }
 
-void scenenode::attachObject(entity* pEnt, GLuint shader){
+template<typename SYSTEM>
+void scenenode<SYSTEM>::attachEntity(entity* pEnt, GLuint shader){
   if(mParent){
-    mParent->attachObject(pEnt, shader);
+    mParent->attachEntity(pEnt, shader);
   }
   if(pEnt){
     pEnt->attach(this);
   }
 }
 
-void scenenode::attachPointLight(light* pLight, GLuint shader){
+template<typename SYSTEM>
+void scenenode<SYSTEM>::attachLight(light* pLight, GLuint shader){
   if(mParent){
-    mParent->attachPointLight(pLight, shader);
+    mParent->attachLight(pLight, shader);
   }
   if(pLight){
     pLight->attach(this);
   }
 }
 
-void scenenode::attachSpotLight(spotLight* pLight, GLuint shader){
-  if(mParent){
-    mParent->attachSpotLight(pLight, shader);
-  }
-  if(pLight){
-    pLight->attach(this);
-  }
-}
-
-void scenenode::attachAmbientLight(glm::vec3 ambientColor, GLuint shader){
-  if(mParent){
-    mParent->attachAmbientLight(ambientColor, shader);
-  }
-}
-
+template<typename SYSTEM>
 glm::mat4 scenenode::getTransform(){
   glm::mat4 transform;
   if(mParent){

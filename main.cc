@@ -10,9 +10,10 @@ int main(){
   OpenGLSystem gfx;
   OpenGLSystem::scenemanager& scene = gfx.getManager(mainScene);
   gfx.setMainScene(mainScene);
-  std::shared_ptr<scenenode> entRoot = scene.getRootNode().createChild();
+  std::shared_ptr<scenenode> entRoot(scene.getRootNode().createChild());
+  OpenGLSystem::entity ent;
 
-  while(){
+  while(gfx.getRunning()){
     gfx.renderMainScene();
   }
  

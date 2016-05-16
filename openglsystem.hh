@@ -64,8 +64,7 @@ void resourcemanager<GraphicsMesh<OpenGL> >::acquire(const REF& name, const std:
 }
 
 //this function does not belong here.
-//  it should be attached to the resource manager
-//  but only the mat manager
+//  it should be attached to the material manager
 GLint acquireTexture(const std::string& file){
   GLuint tex;
   unsigned char* image;
@@ -141,6 +140,11 @@ bool OpenGLSystem::renderScene(const std::string& name){
 template<>
 bool OpenGLSystem::renderMainScene(){
   return renderScene(mMainSceneName);
+}
+
+template<>
+bool OpenGLSystem::getRunning(){
+  return mRunning;
 }
 
 template<>

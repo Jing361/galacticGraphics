@@ -55,10 +55,26 @@ class GraphicsEntity{
 public:
   typedef GraphicsMaterial<ENGINE> material;
   typedef GraphicsMesh<ENGINE> mesh;
+
+private:
+  std::shared_ptr<scenenode> mParent;
+
+public:
+  void attach(std::shared_ptr<scenenode> parent);
 };
 
 template<typename ENGINE>
 class GraphicsLight{
+private:
+  std::shared_ptr<scenenode> mParent;
+  glm::vec3 mDiffuseColor;
+  glm::vec3 mSpecularColor;
+  float mConstant;
+  float mLinear;
+  float mQuadratic;
+
+public:
+  void attach(std::shared_ptr<scenenode> parent);
 };
 
 template<typename ENIGNE>
@@ -96,12 +112,14 @@ private:
   std::string mMainSceneName;
   std::bitset<1024> mKeys;
   unsigned int mFOV;
+  bool mRunning;
 
 public:
   scenemanager& getManager(const std::string& name);
   void setMainScene(const std::string& name);
   bool renderScene(const std::string& name);
   bool renderMainScene();
+  bool getRunning();
   void foo();
 };
 
