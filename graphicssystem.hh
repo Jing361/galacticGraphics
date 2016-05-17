@@ -116,8 +116,8 @@ private:
 
 public:
   scenemanager& getSceneManager(const std::string& name);
-  template<class T>
-  ResourceManager<T>& getResourceManager();
+  template<class RESOURCE>
+  ResourceManager<RESOURCE>& getResourceManager();
   void setMainScene(const std::string& name);
   bool renderScene(const std::string& name);
   bool renderMainScene();
