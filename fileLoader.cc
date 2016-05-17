@@ -23,6 +23,8 @@ fileLoader::triple fileLoader::extractData(std::string line, bool check){
   return ret;
 }
 
+// file format described here
+// http://paulbourke.net/dataformats/obj/
 std::vector<GLfloat> fileLoader::objLoader(std::string fileName){
   std::ifstream file(fileName);
   std::string line;
@@ -98,6 +100,11 @@ std::vector<GLfloat> fileLoader::objLoader(std::string fileName){
   return object;
 }
 
+// should augment file format with attributes
+// attributes could use 'attr' identifier
+// use special attributes to identify whether
+// normals are included or whether color is included
+// or infer this information from line length
 std::vector<GLfloat> fileLoader::flatLoader(std::string fileName){
   std::vector<GLfloat> object;
   std::ifstream file(fileName);
