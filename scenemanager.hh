@@ -6,14 +6,12 @@
 #include<memory>
 #include"graphicssystem.hh"
 #include"sceneNode.hh"
-#include"entity.hh"
-#include"light.hh"
-#include"renderer.hh"
 
 template<typename SYSTEM>
 class scenemanager{
 public:
   typedef typename SYSTEM::shader shader;
+  typedef typename SYSTEM::camera camera;
 
 private:
   class rootnode:public scenenode<SYSTEM>{
@@ -22,7 +20,7 @@ private:
   
   public:
     rootnode(scenemanager* pManager):
-      mManager(pManager){
+      mManager(*pManager){
     }
     
     void attach(std::shared_ptr<entity> pEnt, shader shade){
@@ -36,6 +34,8 @@ private:
   
   std::map<shader, std::shared_ptr<entity> > mEntities;
   std::map<shader, std::shared_ptr<light> > mLights;
+  std::map<std::string, camera> mCameras;
+  std::string mMainCamera;
   rootnode mRoot;
   
   void attachObject(std::shared_ptr<entity> pEnt, shader shade);
@@ -48,6 +48,8 @@ public:
   
   void render();
   scenenode& getRootNode();
+  void addCamera(const std::string& name, camera cam);
+  void setMainCamera(const std::string& name);
 };
 
 #endif
