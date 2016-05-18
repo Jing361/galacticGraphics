@@ -58,17 +58,33 @@ public:
 
 template<typename ENGINE>
 class GraphicsLight{
+public:
+  typedef glm::vec3 color;
+  typedef /*something*/ scenenode;
+
 private:
-  std::shared_ptr<scenenode> mParent;
-  glm::vec3 mDiffuseColor;
-  glm::vec3 mSpecularColor;
+  std::weak_ptr<scenenode> mParent;
+  color mDiffuseColor;
+  color mSpecularColor;
   float mConstant;
   float mLinear;
   float mQuadratic;
 
 public:
+  GraphicsLight(color diff, color spec);
   void attach(std::shared_ptr<scenenode> parent);
 };
+
+template<typename ENGINE>
+GraphicsLight<ENIGNE>::GraphicsLight(color diff, color spec):
+  mDiffuseColor(diff),
+  mSpecularColor(spec){
+}
+
+template<typename ENGINE>
+void GraphicsLight::attach(std::shared_ptr<scenenode> parent){
+  mParent = parent;
+}
 
 template<typename ENIGNE>
 class GraphicsTraits{
@@ -79,7 +95,6 @@ public:
   typedef GraphicsLight<ENGINE>    light;
   typedef GraphicsMesh<ENIGNE>     mesh;
   typedef GraphicsMaterial<ENIGNE> material;
-  typedef scenemanager<ENGINE>     scenemanager;
 };
 
 template<typename ENIGNE, class TRAITS = GraphicsTraits<ENIGNE> >
@@ -92,9 +107,9 @@ public:
   typedef typename TRAITS::light    light;
   typedef typename TRAITS::mesh     mesh;
   typedef typename TRAITS::material material;
-  typedef ResourceManager<mesh> meshManager;
+  typedef ResourceManager<mesh>     meshManager;
   typedef ResourceManager<material> materialManager;
-  typedef TRAITS::scenemanager scenemanager;
+  typedef scenemanager<GraphicsSystem<ENGINE> > scenemanager;
 
 private:
   meshManager mMeshes;

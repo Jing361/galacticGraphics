@@ -268,5 +268,19 @@ void GraphicsShader<OpenGL>::operator()(){
   glUseProgram(mProgram);
 }
 
+template<>
+class GraphicsLight<OpenGL>{
+private:
+  std::weak_ptr<scenenode> mParent;
+  glm::vec3 mDiffuseColor;
+  glm::vec3 mSpecularColor;
+  float mConstant;
+  float mLinear;
+  float mQuadratic;
+
+public:
+  void attach(std::shared_ptr<scenenode> parent);
+};
+
 #endif
 

@@ -16,7 +16,7 @@ public:
   typedef typename SYSTEM::shader shader;
 
 private:
-  class rootnode:public scenenode{
+  class rootnode:public scenenode<SYSTEM>{
   private:
     scenemanager& mManager;
   

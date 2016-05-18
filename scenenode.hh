@@ -11,7 +11,6 @@
 template<typename SYSTEM>
 class scenenode{
 public:
-  typedef typename SYSTEM::scenenode  scenenode;
   typedef typename SYSTEM::entity     entity;
   typedef typename SYSTEM::light      light;
   typedef typename SYSTEM::shader     shader;
