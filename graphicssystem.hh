@@ -36,6 +36,12 @@ private:
   material mMaterial
   mesh mMesh;
   std::weak_ptr<scenenode> mParent;
+
+public:
+  GraphicsEntity(mesh mes, material mat);
+
+  void attach(std::shared_ptr<scenenode> parent);
+  void render(GraphicsShader<OpenGL> shader);
 };
 
 template<typename ENIGNE>
@@ -48,19 +54,6 @@ public:
   GraphicsShader(std::string vertexFile, std::string fragmentFile);
   
   void operator()();
-};
-
-template<typename ENIGNE>
-class GraphicsEntity{
-public:
-  typedef GraphicsMaterial<ENGINE> material;
-  typedef GraphicsMesh<ENGINE> mesh;
-
-private:
-  std::shared_ptr<scenenode> mParent;
-
-public:
-  void attach(std::shared_ptr<scenenode> parent);
 };
 
 template<typename ENGINE>

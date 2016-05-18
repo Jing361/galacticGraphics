@@ -30,7 +30,7 @@ int main(){
   mats.acquire("box", "data/container.jpg");
 
   auto ent = std::make_shared<entity>(meshes.getResource("cube"), mats.getResource("box"));
-  entRoot.attachEntity(ent, shade);
+  entRoot.attach(ent, shade);
 
 
   while(gfx.getRunning()){
