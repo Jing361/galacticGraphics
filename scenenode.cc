@@ -21,23 +21,14 @@ void scenenode<SYSTEM>::scale(double x, double y, double z){
   mTransform = glm::scale(mTransform, glm::vec3(x, y, z));
 }
 
+template<class T>
 template<typename SYSTEM>
-void scenenode<SYSTEM>::attachEntity(std::shared_ptr<entity> pEnt, GLuint shader){
+void scenenode<SYSTEM>attach(std::shared_ptr<T> ptr, shader shade){
   if(mParent){
-    mParent->attachEntity(pEnt, shader);
+    mParent->attach(pEnt, shade);
   }
-  if(pEnt){
-    pEnt->attach(this);
-  }
-}
-
-template<typename SYSTEM>
-void scenenode<SYSTEM>::attachLight(std::shared_ptr<light> pLight, GLuint shader){
-  if(mParent){
-    mParent->attachLight(pLight, shader);
-  }
-  if(pLight){
-    pLight->attach(this);
+  if(ptr
+    ptr->attach(this);
   }
 }
 

@@ -24,12 +24,13 @@ int main(){
   std::shared_ptr<scenenode> entRoot(scene.getRootNode().createChild());
   meshManager& meshes = gfx.getResourceManager<mesh>();
   materialManager& mats = gfx.getResourceManager<material>();
+  shader shade("vertex.glsl", "fragment.glsl");
 
   meshes.acquire("cube", "data/cubePTN.flat");
   mats.acquire("box", "data/container.jpg");
 
-	auto ent = std::make_shared<entity>(meshes.getResource("cube"), mats.getResource("box"));
-  entRoot.attachEntity(ent
+  auto ent = std::make_shared<entity>(meshes.getResource("cube"), mats.getResource("box"));
+  entRoot.attachEntity(ent, shade);
 
 
   while(gfx.getRunning()){

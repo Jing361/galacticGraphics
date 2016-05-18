@@ -12,6 +12,9 @@
 
 template<typename SYSTEM>
 class scenemanager{
+public:
+  typedef typename SYSTEM::shader shader;
+
 private:
   class rootnode:public scenenode{
   private:
@@ -22,21 +25,21 @@ private:
       mManager(pManager){
     }
     
-    void attachObject(std::shared_ptr<entity> pEnt, GLuint shader){
-      mManager.attachObject(pEnt, shader);
+    void attach(std::shared_ptr<entity> pEnt, shader shade){
+      mManager.attachObject(pEnt, shade);
     }
     
-    void attachLight(std::shared_ptr<light> pLight, GLuint shader){
-      mManager.attachLight(pLight, shader);
+    void attach(std::shared_ptr<light> pLight, shader shade){
+      mManager.attachLight(pLight, shade);
     }
   };
   
-  std::map<typename SYSTEM::shader, std::shared_ptr<entity> > mEntities;
-  std::map<typename SYSTEM::shader, std::shared_ptr<light> > mLights;
+  std::map<shader, std::shared_ptr<entity> > mEntities;
+  std::map<shader, std::shared_ptr<light> > mLights;
   rootnode mRoot;
   
-  void attachObject(std::shared_ptr<entity> pEnt, typename SYSTEM::shader shader);
-  void attachLight(std::shared_ptr<light> pLight, typename SYSTEM::shader shader);
+  void attachObject(std::shared_ptr<entity> pEnt, shader shade);
+  void attachLight(std::shared_ptr<light> pLight, shader shade);
   
   friend rootnode;
 

@@ -11,9 +11,10 @@
 template<typename SYSTEM>
 class scenenode{
 public:
-  typedef typename SYSTEM::scenenode scenenode;
-  typedef typename SYSTEM::entity    entity;
-  typedef typename SYSTEM::light     light;
+  typedef typename SYSTEM::scenenode  scenenode;
+  typedef typename SYSTEM::entity     entity;
+  typedef typename SYSTEM::light      light;
+  typedef typename SYSTEM::shader     shader;
 
 private:
   std::shared_ptr<scenenode> mParent;
@@ -25,8 +26,9 @@ public:
   void rotate(double x, double y, double z);
   void scale(double x, double y, double z);
   
-  virtual void attachEntity(std::shared_ptr<entity> pEnt, GLuint shader);
-  virtual void attachLight(light* pLight, GLuint shader);
+  template<class T>
+  virtual void attach(std::shared_ptr<T> ptr, shader shade);
+
   glm::mat4 getTransform();
 };
 
