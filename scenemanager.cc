@@ -1,3 +1,4 @@
+#include<exception>
 #include"scenemanager.hh"
 
 scenemanager::scenemanager(){
@@ -46,5 +47,21 @@ void scenemanager::render(){
 
 sceneNode& scenemanager::getRootNode(){
   return mRoot;
+}
+
+void scenemanager::addCamera(const std::string& name, camera cam){
+  mCameras[name] = cam;
+}
+
+void scenemanager::setMainCamera(const std::string& name){
+  mMaitCamera = name;
+}
+
+camera& scenemanager::getCamera(const std::string& name){
+  try{
+    return mCameras.at(name);
+  } catch(std::exception e){
+    throw;
+  }
 }
 

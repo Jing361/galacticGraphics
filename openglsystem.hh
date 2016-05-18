@@ -237,7 +237,7 @@ void GraphicsShader<OpenGL>::vAttach(GLuint shade, std::basic_string<GLChar> sou
     std::cerr << "ERROR:SHADER:" << path << ":COMPILATION_FAILED\n" << infoLog << std::endl;
   }
   
-  glAttachShader(m_program, shade);
+  glAttachShader(mProgram, shade);
 }
 
 template<>
@@ -251,11 +251,11 @@ GraphicsShader<OpenGL>::GraphicsShader(std::string vertexPath,
   attach(vertexID,   vLoadShader(vertexPath));
   attach(fragmentID, vLoadShader(fragmentPath));
 
-  glLinkProgram(m_program);
-  glGetProgramiv(m_program, GL_LINK_STATUS, &success);
+  glLinkProgram(mProgram);
+  glGetProgramiv(mProgram, GL_LINK_STATUS, &success);
   if(!success){
     GLchar infoLog[512];
-    glGetProgramInfoLog(m_program, 512, NULL, infoLog);
+    glGetProgramInfoLog(mProgram, 512, NULL, infoLog);
     std::cerr << "ERROR:SHADER:PROGRAM:LINKING_FAILED\n" << infoLog << std::endl;
   }
   

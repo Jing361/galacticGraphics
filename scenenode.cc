@@ -23,7 +23,7 @@ void scenenode<SYSTEM>::scale(double x, double y, double z){
 
 template<class T>
 template<typename SYSTEM>
-void scenenode<SYSTEM>attach(std::shared_ptr<T> ptr, shader shade){
+void scenenode<SYSTEM>::attach(std::shared_ptr<T> ptr, shader shade){
   if(mParent){
     mParent->attach(pEnt, shade);
   }

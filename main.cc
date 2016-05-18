@@ -32,6 +32,7 @@ int main(){
   scene.setMainCamera("main");
   meshes.acquire("cube", "data/cubePTN.flat");
   mats.acquire("box", "data/container.jpg");
+  entRoot.translate(0, 3, 0);
 
   auto ent = std::make_shared<entity>(meshes.getResource("cube"), mats.getResource("box"));
   entRoot.attach(ent, shade);
