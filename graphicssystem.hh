@@ -26,11 +26,20 @@ private:
   bool mHasColor;
 };
 
+template<typename ENIGNE>
+class GraphicsShader{
+public:
+  GraphicsShader(std::string vertexFile, std::string fragmentFile);
+  
+  void operator()();
+};
+
 template<typename ENGINE>
 class GraphicsEntity{
 public:
   typedef GraphicsMaterial<ENGINE> material;
   typedef GraphicsMesh<ENGINE>     mesh;
+	typedef GraphicsShader<ENGINE>   shader;
 
 private:
   material mMaterial;
@@ -41,7 +50,7 @@ public:
   GraphicsEntity(mesh mes, material mat);
 
   void attach(std::shared_ptr<scenenode> parent);
-  void render(GraphicsShader<ENGINE> shader);
+  void render(shader shade);
 };
 
 template<typename ENIGNE>
@@ -55,14 +64,6 @@ private:
 
 public:
   glm::mat4 getViewMatrix();
-};
-
-template<typename ENIGNE>
-class GraphicsShader{
-public:
-  GraphicsShader(std::string vertexFile, std::string fragmentFile);
-  
-  void operator()();
 };
 
 template<typename ENGINE>
@@ -85,39 +86,39 @@ public:
 };
 
 template<typename ENGINE>
-GraphicsLight<ENIGNE>::GraphicsLight(color diff, color spec):
+GraphicsLight<ENGINE>::GraphicsLight(color diff, color spec):
   mDiffuseColor(diff),
   mSpecularColor(spec){
 }
 
 template<typename ENGINE>
-void GraphicsLight::attach(std::shared_ptr<scenenode> parent){
+void GraphicsLight<ENGINE>::attach(std::shared_ptr<scenenode> parent){
   mParent = parent;
 }
 
-template<typename ENIGNE>
+template<typename ENGINE>
 class GraphicsTraits{
 public:
-  typedef GraphicsShader<ENIGNE>   shader;
-  typedef GraphicsEntity<ENIGNE>   entity;
-  typedef GraphicsCamera<ENIGNE>   camera;
+  typedef GraphicsShader<ENGINE>   shader;
+  typedef GraphicsEntity<ENGINE>   entity;
+  typedef GraphicsCamera<ENGINE>   camera;
   typedef GraphicsLight<ENGINE>    light;
-  typedef GraphicsMesh<ENIGNE>     mesh;
-  typedef GraphicsMaterial<ENIGNE> material;
+  typedef GraphicsMesh<ENGINE>     mesh;
+  typedef GraphicsMaterial<ENGINE> material;
 };
 
-template<typename ENIGNE, class TRAITS = GraphicsTraits<ENIGNE> >
+template<typename ENGINE, class TRAITS = GraphicsTraits<ENGINE> >
 class GraphicsSystem{
 public:
-  typedef ENIGNE engine;
+  typedef ENGINE engine;
   typedef typename TRAITS::shader   shader;
   typedef typename TRAITS::entity   entity;
   typedef typename TRAITS::camera   camera;
   typedef typename TRAITS::light    light;
   typedef typename TRAITS::mesh     mesh;
   typedef typename TRAITS::material material;
-  typedef ResourceManager<mesh>     meshManager;
-  typedef ResourceManager<material> materialManager;
+  typedef resourcemanager<mesh>     meshManager;
+  typedef resourcemanager<material> materialManager;
   typedef scenemanager<GraphicsSystem<ENGINE> > scenemanager;
 
 private:
@@ -134,7 +135,7 @@ private:
 public:
   scenemanager& getSceneManager(const std::string& name);
   template<class RESOURCE>
-  ResourceManager<RESOURCE>& getResourceManager();
+  resourcemanager<RESOURCE>& getResourceManager();
   void setMainScene(const std::string& name);
   bool renderScene(const std::string& name);
   bool renderMainScene();
