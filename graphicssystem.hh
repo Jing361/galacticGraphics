@@ -46,6 +46,15 @@ public:
 
 template<typename ENIGNE>
 class GraphicsCamera{
+private:
+  std::weak_ptr<scenenode> mParent;
+  glm::vec3 mFront;
+  glm::vec3 mWorldup;
+  glm::vec3 mRight;
+  glm::vec3 mUp;
+
+public:
+  glm::mat4 getViewMatrix();
 };
 
 template<typename ENIGNE>
