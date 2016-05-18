@@ -50,6 +50,7 @@ public:
   scenenode& getRootNode();
   void addCamera(const std::string& name, camera cam);
   void setMainCamera(const std::string& name);
+  camera& getCamera(const std::string& name);
 };
 
 #endif

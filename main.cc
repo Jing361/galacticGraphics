@@ -17,21 +17,24 @@ int main(){
   typedef OpenGLSystem::materialManager materialManager;
   typedef OpenGLSystem::scenemanager scenemanager;
 
-  std::string mainScene = "main";
   OpenGLSystem gfx;
   scenemanager& scene = gfx.getManager(mainScene);
-  gfx.setMainScene(mainScene);
-  std::shared_ptr<scenenode> entRoot(scene.getRootNode().createChild());
   meshManager& meshes = gfx.getResourceManager<mesh>();
   materialManager& mats = gfx.getResourceManager<material>();
-  shader shade("vertex.glsl", "fragment.glsl");
 
+  std::string mainScene = "main";
+  shader shade("vertex.glsl", "fragment.glsl");
+  std::shared_ptr<scenenode> entRoot(scene.getRootNode().createChild());
+  camera cam;
+
+  gfx.setMainScene(mainScene);
+  scene.addCamera("main", cam);
+  scene.setMainCamera("main");
   meshes.acquire("cube", "data/cubePTN.flat");
   mats.acquire("box", "data/container.jpg");
 
   auto ent = std::make_shared<entity>(meshes.getResource("cube"), mats.getResource("box"));
   entRoot.attach(ent, shade);
-
 
   while(gfx.getRunning()){
     gfx.renderMainScene();
