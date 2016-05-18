@@ -41,7 +41,7 @@ public:
   GraphicsEntity(mesh mes, material mat);
 
   void attach(std::shared_ptr<scenenode> parent);
-  void render(GraphicsShader<OpenGL> shader);
+  void render(GraphicsShader<ENGINE> shader);
 };
 
 template<typename ENIGNE>

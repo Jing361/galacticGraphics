@@ -196,6 +196,21 @@ public:
 };
 
 template<>
+GraphicsEntity<OpenGL>::GraphicsEntity(mesh mes, material mat):
+  mMaterial(mat),
+  mMesh(mes){
+}
+
+template<>
+void GraphicsEntity<OpenGL>::attach(std::shared_ptr<scenenode> parent){
+  mParent = parent;
+}
+
+template<>
+void GraphicsEntity<OpenGL>::render(GraphicsShader<OpenGL> shader){
+}
+
+template<>
 std::basic_string<GLChar> GraphicsSystem<OpenGL>::vLoadShader(std::string fileName){
   std::basic_string<GLChar> source;
   std::string line;
