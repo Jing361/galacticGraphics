@@ -12,6 +12,8 @@ class scenemanager{
 public:
   typedef typename SYSTEM::shader shader;
   typedef typename SYSTEM::camera camera;
+  typedef typename SYSTEM::entity entity;
+  typedef typename SYSTEM::light  light;
 
 private:
   class rootnode:public scenenode<SYSTEM>{
@@ -47,7 +49,7 @@ public:
   scenemanager();
   
   void render();
-  scenenode& getRootNode();
+  scenenode<SYSTEM>& getRootNode();
   void addCamera(const std::string& name, camera cam);
   void setMainCamera(const std::string& name);
   camera& getCamera(const std::string& name);

@@ -26,14 +26,14 @@ private:
   bool mHasColor;
 };
 
-template<typename ENIGNE>
+template<typename ENGINE>
 class GraphicsEntity{
 public:
   typedef GraphicsMaterial<ENGINE> material;
   typedef GraphicsMesh<ENGINE>     mesh;
 
 private:
-  material mMaterial
+  material mMaterial;
   mesh mMesh;
   std::weak_ptr<scenenode> mParent;
 

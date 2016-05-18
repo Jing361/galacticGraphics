@@ -25,7 +25,7 @@ public:
   void scale(double x, double y, double z);
   
   template<class T>
-  virtual void attach(std::shared_ptr<T> ptr, shader shade);
+  void attach(std::shared_ptr<T> ptr, shader shade);
 
   glm::mat4 getTransform();
 };
