@@ -14,12 +14,18 @@ struct Engine{
   static const unsigned int version;
 };
 
-template<typename ENIGNE>
-class GraphicsMaterial{
+template<typename RESOURCE>
+class resource{
+public:
+  static RESOURCE acquire(const std::string& fileName);
 };
 
 template<typename ENIGNE>
-class GraphicsMesh{
+class GraphicsMaterial : public resource<GraphicsMaterial<ENGINE> >{
+};
+
+template<typename ENIGNE>
+class GraphicsMesh : public resource<GraphicsMesh<ENGINE> >{
 private:
   unsigned int mNVert;
   bool mHasNormal;
@@ -66,21 +72,21 @@ public:
   typedef typename TRAITS::material material;
   typedef resourcemanager<mesh>     meshManager;
   typedef resourcemanager<material> materialManager;
-  typedef scenemanager<GraphicsSystem<ENGINE> > scenemanager;
+  typedef scenemanager<GraphicsSystem<ENGINE> > scene;
 
 private:
   meshManager mMeshes;
   materialManager mMaterials;
   std::map<std::string, std::shared_ptr<entity> > mEntities;
   std::map<std::string, std::shared_ptr<light> > mLights;
-  std::map<std::string, scenemanager> mScenes;
+  std::map<std::string, scene> mScenes;
   std::string mMainSceneName;
   std::bitset<1024> mKeys;
   unsigned int mFOV;
   bool mRunning;
 
 public:
-  scenemanager& getSceneManager(const std::string& name);
+  scene& getSceneManager(const std::string& name);
   template<class RESOURCE>
   resourcemanager<RESOURCE>& getResourceManager();
   void setMainScene(const std::string& name);
@@ -97,28 +103,28 @@ public:
   typedef GraphicsMesh<ENGINE>     mesh;
 	typedef GraphicsShader<ENGINE>   shader;
   typedef GraphicsSystem<ENGINE>   system;
-  typedef scenenode<system>        scenenode;
+  typedef scenenode<system>        node;
 
 private:
   material mMaterial;
   mesh mMesh;
-  std::weak_ptr<scenenode> mParent;
+  std::weak_ptr<node> mParent;
 
 public:
   GraphicsEntity(mesh mes, material mat);
 
-  void attach(std::shared_ptr<scenenode> parent);
+  void attach(std::shared_ptr<node> parent);
   void render(shader shade);
 };
 
-template<typename ENIGNE>
+template<typename ENGINE>
 class GraphicsCamera{
 public:
   typedef GraphicsSystem<ENGINE>  system;
-  typedef scenenode<system>       scenenode;
+  typedef scenenode<system>       node;
 
 private:
-  std::weak_ptr<scenenode> mParent;
+  std::weak_ptr<node> mParent;
   glm::vec3 mFront;
   glm::vec3 mWorldup;
   glm::vec3 mRight;
@@ -133,10 +139,10 @@ class GraphicsLight{
 public:
   typedef glm::vec3 color;
   typedef GraphicsSystem<ENGINE> system;
-  typedef scenenode<system>      scenenode;
+  typedef scenenode<system>      node;
 
 private:
-  std::weak_ptr<scenenode> mParent;
+  std::weak_ptr<node> mParent;
   color mDiffuseColor;
   color mSpecularColor;
   float mConstant;
@@ -145,7 +151,7 @@ private:
 
 public:
   GraphicsLight(color diff, color spec);
-  void attach(std::shared_ptr<scenenode> parent);
+  void attach(std::shared_ptr<node> parent);
 };
 
 template<typename ENGINE>
@@ -155,7 +161,7 @@ GraphicsLight<ENGINE>::GraphicsLight(color diff, color spec):
 }
 
 template<typename ENGINE>
-void GraphicsLight<ENGINE>::attach(std::shared_ptr<scenenode> parent){
+void GraphicsLight<ENGINE>::attach(std::shared_ptr<node> parent){
   mParent = parent;
 }
 
