@@ -24,7 +24,7 @@ typedef OpenGL3 OpenGL;
 typedef GraphicsSystem<OpenGL> OpenGLSystem;
 
 template<>
-class GraphicsMesh<OpenGL>{
+class GraphicsMesh<OpenGL> : public resource<GraphicsMesh<OpenGL> >{
 public:
   GLuint mVbo;
   unsigned int mNVert;
@@ -33,16 +33,16 @@ public:
 };
 
 template<>
-class GraphicsMaterial<OpenGL>{
+class GraphicsMaterial<OpenGL> : public resource<GraphicsMaterial<OpenGL> >{
 public:
   GLuint mDiffuseMap;
   GLuint mSpecularMap;
   float mShininess;
 };
 
-template<typename REF = std::string>
-void resourcemanager<GraphicsMesh<OpenGL> >::acquire(const REF& name, const std::string& fileName){
-  type mesh;
+template<>
+GraphicsMesh<OpenGL> resource<GraphicsMesh<OpenGL> >::acquire(const std::string& fileName){
+  GraphicsMesh<OpenGL> mesh;
   std::vector<GLfloat> verts;
   
   size_t dot = fileName.rfind('.');
@@ -60,7 +60,7 @@ void resourcemanager<GraphicsMesh<OpenGL> >::acquire(const REF& name, const std:
   glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(GLfloat), verts.data(), GL_STATIC_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   
-  mResources[name] = mesh;
+  return mesh;
 }
 
 //this function does not belong here.
@@ -89,9 +89,9 @@ GLint acquireTexture(const std::string& file){
   return tex;
 }
 
-template<typename REF = std::string>
-void resourcemanager<GraphicsMaterial<OpenGL> >::acquire(const REF& name, const std::string& fileName){
-  type material;
+template<>
+GraphicsMaterial<OpenGL> resource<GraphicsMaterial<OpenGL> >::acquire(const std::string& fileName){
+  GraphicsMaterial<OpenGL> material;
 
   size_t dot = fileName.rfind('.');
   std::string title(fileName.substr(0, dot));
@@ -112,7 +112,7 @@ void resourcemanager<GraphicsMaterial<OpenGL> >::acquire(const REF& name, const 
     material.m_specMap = -1;
   }
 
-  mResources[name] = material;
+  return material;
 }
 
 template<>

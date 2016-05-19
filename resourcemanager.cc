@@ -3,6 +3,12 @@
 #include<exception>
 #include"resourcemanager.hh"
 
+template<typename RESOURCE, typename REF = std::string>
+bool checkFile(const std::string& fileName){
+  return (bool) std::ifstream(fileName);
+}
+
+template<typename RESOURCE, typename REF = std::string>
 resourcemanager::~resourcemanager(){
 }
 
@@ -14,6 +20,11 @@ bool resourcemanager<RESOURCE, REF>::checkFile(const std::string& fileName){
   file.close();
   
   return ret;
+}
+
+template<typename RESOURCE, typename REF = std::string>
+void resourcemanager<RESOURCE, REF>::acquire(const REF& name, const std::string& fileName){
+  mResources[name] = RESOURCE::acquire(fileName);
 }
 
 template<typename RESOURCE, typename REF = std::string>
