@@ -20,11 +20,11 @@ public:
   static RESOURCE acquire(const std::string& fileName);
 };
 
-template<typename ENIGNE>
+template<typename ENGINE>
 class GraphicsMaterial : public resource<GraphicsMaterial<ENGINE> >{
 };
 
-template<typename ENIGNE>
+template<typename ENGINE>
 class GraphicsMesh : public resource<GraphicsMesh<ENGINE> >{
 private:
   unsigned int mNVert;
@@ -32,7 +32,7 @@ private:
   bool mHasColor;
 };
 
-template<typename ENIGNE>
+template<typename ENGINE>
 class GraphicsShader{
 public:
   GraphicsShader(std::string vertexFile, std::string fragmentFile);

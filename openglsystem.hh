@@ -5,11 +5,28 @@
 #include<string>
 #include<fstream>
 #include<exception>
+#include<SOIL.h>
+#include"fileloader.hh"
 #include"graphicssystem.hh"
 #include"resourcemanager.hh"
 
+class invalidFileNameException : public std::exception{
+private:
+	std::string mText;
+
+public:
+	invalidFileNameException(const std::string& filename, const std::string& msg):
+		mText("Invalid file name: " + filename + ".  " + msg){
+	}
+
+	const char* what() const noexcept{
+		return mText.data();
+	}
+};
+
 typedef unsigned int GLuint;
 typedef int GLint;
+typedef char GLchar;
 
 struct OpenGL3:public Engine<OpenGL3>{
   static const unsigned int minor;
@@ -99,34 +116,36 @@ GraphicsMaterial<OpenGL> resource<GraphicsMaterial<OpenGL> >::acquire(const std:
   std::string diffName = title + "_diffuse." + type;
   std::string specName = title + "_specular." + type;
   
-  if(checkFile(diffName)){
-    material.m_diffMap = acquireTexture(diffName);
+  if(resourcemanager<GraphicsMaterial<OpenGL> >::checkFile(diffName)){
+    material.mDiffuseMap = acquireTexture(diffName);
   } else {
     //require at least diffuse map
-    throw invalideFileNameException("Invalid file name.  Valid diffuse map required.");
+    throw invalidFileNameException(diffName, "Valid diffuse map required.");
   }
   //specular map not required
-  if(checkFile(specName)){
-    material.m_specMap = acquireTexture(specName);
+  if(resourcemanager<GraphicsMaterial<OpenGL> >::checkFile(specName)){
+    material.mSpecularMap = acquireTexture(specName);
   } else {
-    material.m_specMap = -1;
+    material.mSpecularMap = -1;
   }
 
   return material;
 }
 
 template<>
-scenemanager& OpenGLSystem::getSceneManager(const std::string& name){
+scenemanager<OpenGLSystem>& OpenGLSystem::getSceneManager(const std::string& name){
   return mScenes[name];
 }
 
 template<>
-ResourceManager<mesh>& OpenGLSystem::getResourceManager(){
+template<>
+resourcemanager<GraphicsMesh<OpenGL> >& OpenGLSystem::getResourceManager(){
   return mMeshes;
 }
 
 template<>
-ResourceManager<material>& OpenGLSystem::getResourceManager(){
+template<>
+resourcemanager<GraphicsMaterial<OpenGL> >& OpenGLSystem::getResourceManager(){
   return mMaterials;
 }
 
@@ -159,7 +178,7 @@ bool OpenGLSystem::getRunning(){
 
 template<>
 void OpenGLSystem::foo(){
-  std::cout << OpenGLSystem::system::name << std::endl;
+  std::cout << OpenGLSystem::engine::name << std::endl;
 }
 
 template<>
@@ -168,7 +187,7 @@ private:
   GLuint mProgram;
 
   std::string vLoadShader(const char* fileName);
-  void vAttach(GLuint shade, std::basic_string<GLChar> path);
+  void vAttach(GLuint shade, std::basic_string<GLchar> path);
 
 public:
   GraphicsShader(std::string vertexFile, std::string fragmentFile);
@@ -181,17 +200,18 @@ class GraphicsEntity<OpenGL>{
 public:
   typedef GraphicsMaterial<OpenGL> material;
   typedef GraphicsMesh<OpenGL>     mesh;
+	typedef GraphicsSystem<OpenGL>   system;
 
 private:
   GLuint mVao;
   material mMaterial;
   mesh mMesh;
-  std::weak_ptr<scenenode> mParent;
+  std::weak_ptr<scenenode<system> > mParent;
 
 public:
   GraphicsEntity(mesh mes, material mat);
 
-  void attach(std::shared_ptr<scenenode> parent);
+  void attach(std::shared_ptr<scenenode<system> > parent);
   void render(GraphicsShader<OpenGL> shader);
 };
 
@@ -211,8 +231,8 @@ void GraphicsEntity<OpenGL>::render(GraphicsShader<OpenGL> shader){
 }
 
 template<>
-std::basic_string<GLChar> GraphicsSystem<OpenGL>::vLoadShader(std::string fileName){
-  std::basic_string<GLChar> source;
+std::basic_string<GLchar> GraphicsSystem<OpenGL>::vLoadShader(std::string fileName){
+  std::basic_string<GLchar> source;
   std::string line;
   std::ifstream file(fileName);
   
@@ -224,7 +244,7 @@ std::basic_string<GLChar> GraphicsSystem<OpenGL>::vLoadShader(std::string fileNa
 }
 
 template<>
-void GraphicsShader<OpenGL>::vAttach(GLuint shade, std::basic_string<GLChar> source){
+void GraphicsShader<OpenGL>::vAttach(GLuint shade, std::basic_string<GLchar> source){
   GLint success;
 
   glShaderSource(shade, 1, &source.c_str(), NULL);
