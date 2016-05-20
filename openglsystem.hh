@@ -12,16 +12,44 @@
 
 class invalidFileNameException : public std::exception{
 private:
-	std::string mText;
+  std::string mText;
 
 public:
-	invalidFileNameException(const std::string& filename, const std::string& msg):
-		mText("Invalid file name: " + filename + ".  " + msg){
-	}
+  invalidFileNameException(const std::string& filename, const std::string& msg):
+    mText("Invalid file name: " + filename + ".  " + msg){
+  }
 
-	const char* what() const noexcept{
-		return mText.data();
-	}
+  const char* what() const noexcept{
+    return mText.data();
+  }
+};
+
+class shaderCompilationFailedException : public std::exception{
+private:
+  std::string mText;
+
+public:
+  shaderCompilationFailedException(const std::string& path, const std::string& log):
+    mText("ERROR:SHADER:" + path + ":COMPILATION_FAILED\n" + log){
+  }
+
+  const char* what() const noexcept{
+    return mText.data();
+  }
+};
+
+class shaderLinkingFailedException : public std::exception{
+private:
+  std::string mText;
+
+public:
+  shaderLinkingFailedException(const std::string& log):
+    mText("ERROR:SHADER:PROGRAM:LINKING_FAILED\n" + log){
+  }
+
+  const char* what() const noexcept{
+    return mText.data();
+  }
 };
 
 typedef unsigned int GLuint;
@@ -200,7 +228,7 @@ class GraphicsEntity<OpenGL>{
 public:
   typedef GraphicsMaterial<OpenGL> material;
   typedef GraphicsMesh<OpenGL>     mesh;
-	typedef GraphicsSystem<OpenGL>   system;
+  typedef GraphicsSystem<OpenGL>   system;
 
 private:
   GLuint mVao;
@@ -250,7 +278,7 @@ void GraphicsShader<OpenGL>::vAttach(GLuint shade, std::basic_string<GLchar> sou
   if(!success){
     GLchar infoLog[512];
     glGetShaderInfoLog(shade, 512, NULL, infoLog);
-    std::cerr << "ERROR:SHADER:" << path << ":COMPILATION_FAILED\n" << infoLog << std::endl;
+    throw shaderCompilationFailedException(path, infoLog);
   }
   
   glAttachShader(mProgram, shade);
@@ -268,14 +296,16 @@ GraphicsShader<OpenGL>::GraphicsShader(const std::string& vertexPath,
 
   glLinkProgram(mProgram);
   glGetProgramiv(mProgram, GL_LINK_STATUS, &success);
+
+  // delete shaders early for exception safety.
+  glDeleteShader(vertexID);
+  glDeleteShader(fragmentID);
+
   if(!success){
     GLchar infoLog[512];
     glGetProgramInfoLog(mProgram, 512, NULL, infoLog);
-    std::cerr << "ERROR:SHADER:PROGRAM:LINKING_FAILED\n" << infoLog << std::endl;
+    throw shaderLinkingFailedException(infoLog);
   }
-  
-  glDeleteShader(vertexID);
-  glDeleteShader(fragmentID);
 }
 
 void GraphicsShader<OpenGL>::operator()(){
@@ -285,7 +315,7 @@ void GraphicsShader<OpenGL>::operator()(){
 template<>
 class GraphicsLight<OpenGL>{
 public:
-	typedef GraphicsSystem<OpenGL> system;
+  typedef GraphicsSystem<OpenGL> system;
 
 private:
   std::weak_ptr<scenenode<system> > mParent;
