@@ -312,7 +312,8 @@ GraphicsShader<OpenGL>::GraphicsShader(const std::string& vertexPath,
 }
 
 GraphicsShader<OpenGL>::~GraphicsShader(){
-  glDeleteProgram(mProgram);
+	//deleting here would allow copied objects to delete the shader...
+  //glDeleteProgram(mProgram);
 }
 
 void GraphicsShader<OpenGL>::operator()(){
