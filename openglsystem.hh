@@ -215,10 +215,11 @@ private:
   GLuint mProgram;
 
   std::string vLoadShader(const std::string& fileName);
-  void vAttach(GLuint shade, std::basic_string<GLchar> path);
+  void vAttach(GLuint shade, const std::basic_string<GLchar>& source, const std::string& path = "");
 
 public:
   GraphicsShader(const std::string& vertexFile, const std::string& fragmentFile);
+  virtual ~GraphicsShader();
   
   void operator()();
 };
@@ -267,7 +268,7 @@ std::basic_string<GLchar> GraphicsShader<OpenGL>::vLoadShader(const std::string&
   return source;
 }
 
-void GraphicsShader<OpenGL>::vAttach(GLuint shade, std::basic_string<GLchar> source){
+void GraphicsShader<OpenGL>::vAttach(GLuint shade, const std::basic_string<GLchar>& source, const std::string& path){
   GLint success;
   const char* srcStr = source.c_str();
 
@@ -291,8 +292,8 @@ GraphicsShader<OpenGL>::GraphicsShader(const std::string& vertexPath,
   GLuint vertexID =   glCreateShader(GL_VERTEX_SHADER);
   GLuint fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
 
-  vAttach(vertexID,   vLoadShader(vertexPath));
-  vAttach(fragmentID, vLoadShader(fragmentPath));
+  vAttach(vertexID,   vLoadShader(vertexPath), vertexPath);
+  vAttach(fragmentID, vLoadShader(fragmentPath), fragmentPath);
 
   glLinkProgram(mProgram);
   glGetProgramiv(mProgram, GL_LINK_STATUS, &success);
@@ -304,8 +305,14 @@ GraphicsShader<OpenGL>::GraphicsShader(const std::string& vertexPath,
   if(!success){
     GLchar infoLog[512];
     glGetProgramInfoLog(mProgram, 512, NULL, infoLog);
+    //object creation failed, delete program
+    glDeleteProgram(mProgram);
     throw shaderLinkingFailedException(infoLog);
   }
+}
+
+GraphicsShader<OpenGL>::~GraphicsShader(){
+  glDeleteProgram(mProgram);
 }
 
 void GraphicsShader<OpenGL>::operator()(){
