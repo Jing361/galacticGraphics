@@ -186,11 +186,11 @@ class GraphicsShader<OpenGL>{
 private:
   GLuint mProgram;
 
-  std::string vLoadShader(const char* fileName);
+  std::string vLoadShader(const std::string& fileName);
   void vAttach(GLuint shade, std::basic_string<GLchar> path);
 
 public:
-  GraphicsShader(std::string vertexFile, std::string fragmentFile);
+  GraphicsShader(const std::string& vertexFile, const std::string& fragmentFile);
   
   void operator()();
 };
@@ -215,23 +215,19 @@ public:
   void render(GraphicsShader<OpenGL> shader);
 };
 
-template<>
 GraphicsEntity<OpenGL>::GraphicsEntity(mesh mes, material mat):
   mMaterial(mat),
   mMesh(mes){
 }
 
-template<>
-void GraphicsEntity<OpenGL>::attach(std::shared_ptr<scenenode> parent){
+void GraphicsEntity<OpenGL>::attach(std::shared_ptr<scenenode<system> > parent){
   mParent = parent;
 }
 
-template<>
 void GraphicsEntity<OpenGL>::render(GraphicsShader<OpenGL> shader){
 }
 
-template<>
-std::basic_string<GLchar> GraphicsSystem<OpenGL>::vLoadShader(std::string fileName){
+std::basic_string<GLchar> GraphicsShader<OpenGL>::vLoadShader(const std::string& fileName){
   std::basic_string<GLchar> source;
   std::string line;
   std::ifstream file(fileName);
@@ -243,11 +239,11 @@ std::basic_string<GLchar> GraphicsSystem<OpenGL>::vLoadShader(std::string fileNa
   return source;
 }
 
-template<>
 void GraphicsShader<OpenGL>::vAttach(GLuint shade, std::basic_string<GLchar> source){
   GLint success;
+  const char* srcStr = source.c_str();
 
-  glShaderSource(shade, 1, &source.c_str(), NULL);
+  glShaderSource(shade, 1, &srcStr, NULL);
   glCompileShader(shade);
   
   glGetShaderiv(shade, GL_COMPILE_STATUS, &success);
@@ -260,16 +256,15 @@ void GraphicsShader<OpenGL>::vAttach(GLuint shade, std::basic_string<GLchar> sou
   glAttachShader(mProgram, shade);
 }
 
-template<>
-GraphicsShader<OpenGL>::GraphicsShader(std::string vertexPath,
-                                       std::string fragmentPath):
+GraphicsShader<OpenGL>::GraphicsShader(const std::string& vertexPath,
+                                       const std::string& fragmentPath):
   mProgram(glCreateProgram()){
   GLint success;
   GLuint vertexID =   glCreateShader(GL_VERTEX_SHADER);
   GLuint fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
 
-  attach(vertexID,   vLoadShader(vertexPath));
-  attach(fragmentID, vLoadShader(fragmentPath));
+  vAttach(vertexID,   vLoadShader(vertexPath));
+  vAttach(fragmentID, vLoadShader(fragmentPath));
 
   glLinkProgram(mProgram);
   glGetProgramiv(mProgram, GL_LINK_STATUS, &success);
@@ -283,15 +278,17 @@ GraphicsShader<OpenGL>::GraphicsShader(std::string vertexPath,
   glDeleteShader(fragmentID);
 }
 
-template<>
 void GraphicsShader<OpenGL>::operator()(){
   glUseProgram(mProgram);
 }
 
 template<>
 class GraphicsLight<OpenGL>{
+public:
+	typedef GraphicsSystem<OpenGL> system;
+
 private:
-  std::weak_ptr<scenenode> mParent;
+  std::weak_ptr<scenenode<system> > mParent;
   glm::vec3 mDiffuseColor;
   glm::vec3 mSpecularColor;
   float mConstant;
@@ -299,7 +296,7 @@ private:
   float mQuadratic;
 
 public:
-  void attach(std::shared_ptr<scenenode> parent);
+  void attach(std::shared_ptr<scenenode<system> > parent);
 };
 
 #endif

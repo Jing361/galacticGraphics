@@ -35,7 +35,7 @@ private:
 template<typename ENGINE>
 class GraphicsShader{
 public:
-  GraphicsShader(std::string vertexFile, std::string fragmentFile);
+  GraphicsShader(const std::string& vertexFile, const std::string& fragmentFile);
   
   void operator()();
 };

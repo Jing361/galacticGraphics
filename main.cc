@@ -6,16 +6,16 @@
 #include"openglsystem.hh"
 
 int main(){
-  typedef OpenGLSystem engine;
-  typedef typename OpenGLSystem::shader   shader;
-  typedef typename OpenGLSystem::entity   entity;
-  typedef typename OpenGLSystem::camera   camera;
-  typedef typename OpenGLSystem::light    light;
-  typedef typename OpenGLSystem::mesh     mesh;
-  typedef typename OpenGLSystem::material material;
-  typedef OpenGLSystem::meshManager meshManager;
-  typedef OpenGLSystem::materialManager materialManager;
-  typedef OpenGLSystem::scenemanager scenemanager;
+  typedef OpenGLSystem system;
+  typedef typename system::shader   shader;
+  typedef typename system::entity   entity;
+  typedef typename system::camera   camera;
+  typedef typename system::light    light;
+  typedef typename system::mesh     mesh;
+  typedef typename system::material material;
+  typedef system::meshManager       meshManager;
+  typedef system::materialManager   materialManager;
+  typedef system::scene             scenemanager;
 
   OpenGLSystem gfx;
   scenemanager& scene = gfx.getManager(mainScene);
