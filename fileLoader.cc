@@ -1,9 +1,9 @@
 #include<sstream>
 #include<string>
 #include<fstream>
-#include"fileLoader.hh"
+#include"fileloader.hh"
 
-fileLoader::triple fileLoader::extractData(std::string line, bool check){
+fileloader::triple fileloader::extractData(std::string line, bool check){
   triple ret;
   GLfloat value;
   std::string token;
@@ -25,7 +25,7 @@ fileLoader::triple fileLoader::extractData(std::string line, bool check){
 
 // file format described here
 // http://paulbourke.net/dataformats/obj/
-std::vector<GLfloat> fileLoader::objLoader(std::string fileName){
+std::vector<GLfloat> fileloader::objLoader(std::string fileName){
   std::ifstream file(fileName);
   std::string line;
   std::vector<GLfloat> object;
@@ -105,7 +105,7 @@ std::vector<GLfloat> fileLoader::objLoader(std::string fileName){
 // use special attributes to identify whether
 // normals are included or whether color is included
 // or infer this information from line length
-std::vector<GLfloat> fileLoader::flatLoader(std::string fileName){
+std::vector<GLfloat> fileloader::flatLoader(std::string fileName){
   std::vector<GLfloat> object;
   std::ifstream file(fileName);
   std::string line;

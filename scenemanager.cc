@@ -45,7 +45,7 @@ void scenemanager::render(){
   }
 }
 
-sceneNode& scenemanager::getRootNode(){
+scenenode& scenemanager::getRootNode(){
   return mRoot;
 }
 

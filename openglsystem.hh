@@ -93,9 +93,9 @@ GraphicsMesh<OpenGL> resource<GraphicsMesh<OpenGL> >::acquire(const std::string&
   size_t dot = fileName.rfind('.');
   std::string type(fileName.substr(dot));
   if(type == "obj"){
-    verts = fileLoader::objLoader(fileName);
+    verts = fileloader::objLoader(fileName);
   } else if(type == "flat"){
-    verts = fileLoader::flatLoader(fileName);
+    verts = fileloader::flatLoader(fileName);
   }
   mesh.mNVert = verts.size();
   
@@ -230,6 +230,7 @@ public:
   typedef GraphicsMaterial<OpenGL> material;
   typedef GraphicsMesh<OpenGL>     mesh;
   typedef GraphicsSystem<OpenGL>   system;
+  typedef scenenode<system>        node;
 
 private:
   GLuint mVao;
@@ -240,7 +241,7 @@ private:
 public:
   GraphicsEntity(mesh mes, material mat);
 
-  void attach(std::shared_ptr<scenenode<system> > parent);
+  void attach(std::shared_ptr<node> parent);
   void render(GraphicsShader<OpenGL> shader);
 };
 
@@ -249,7 +250,7 @@ GraphicsEntity<OpenGL>::GraphicsEntity(mesh mes, material mat):
   mMesh(mes){
 }
 
-void GraphicsEntity<OpenGL>::attach(std::shared_ptr<scenenode<system> > parent){
+void GraphicsEntity<OpenGL>::attach(std::shared_ptr<node> parent){
   mParent = parent;
 }
 

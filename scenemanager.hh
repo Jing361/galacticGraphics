@@ -5,7 +5,7 @@
 #include<vector>
 #include<memory>
 #include"graphicssystem.hh"
-#include"sceneNode.hh"
+#include"scenenode.hh"
 
 template<typename SYSTEM>
 class scenemanager{
