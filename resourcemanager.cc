@@ -4,22 +4,12 @@
 #include"resourcemanager.hh"
 
 template<typename RESOURCE, typename REF = std::string>
-bool checkFile(const std::string& fileName){
+bool resourcemanager<RESOURCE, REF>::checkFile(const std::string& fileName){
   return (bool) std::ifstream(fileName);
 }
 
 template<typename RESOURCE, typename REF = std::string>
 resourcemanager::~resourcemanager(){
-}
-
-template<typename RESOURCE, typename REF = std::string>
-bool resourcemanager<RESOURCE, REF>::checkFile(const std::string& fileName){
-  std::ifstream file(fileName);
-  bool ret = file;
-  
-  file.close();
-  
-  return ret;
 }
 
 template<typename RESOURCE, typename REF = std::string>

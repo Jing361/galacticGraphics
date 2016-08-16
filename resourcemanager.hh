@@ -19,8 +19,9 @@ public:
   RESOURCE& getResource(const REF& name);
 
   static bool checkFile(const std::string& fileName);
-
 };
+
+#include"resourcemanager.cc"
 
 #endif
 
