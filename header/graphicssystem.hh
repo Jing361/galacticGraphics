@@ -36,8 +36,12 @@ template<typename ENGINE>
 class GraphicsShader{
 public:
   GraphicsShader(const std::string& vertexFile, const std::string& fragmentFile);
-  
+
   void operator()();
+
+  bool operator==( const GraphicsShader& other ) const;
+  bool operator!=( const GraphicsShader& other ) const;
+  operator int( ) const;
 };
 
 template<typename ENGINE>
@@ -58,6 +62,7 @@ public:
   typedef GraphicsLight<ENGINE>    light;
   typedef GraphicsMesh<ENGINE>     mesh;
   typedef GraphicsMaterial<ENGINE> material;
+  typedef int                      location;
 };
 
 template<typename ENGINE, class TRAITS = GraphicsTraits<ENGINE> >
@@ -70,6 +75,7 @@ public:
   typedef typename TRAITS::light    light;
   typedef typename TRAITS::mesh     mesh;
   typedef typename TRAITS::material material;
+  typedef typename TRAITS::location location;
   typedef resourcemanager<mesh>     meshManager;
   typedef resourcemanager<material> materialManager;
   typedef scenemanager<GraphicsSystem<ENGINE> > scene;
@@ -132,14 +138,16 @@ private:
 
 public:
   glm::mat4 getViewMatrix();
+  glm::vec3 getPosition();
 };
 
 template<typename ENGINE>
 class GraphicsLight{
 public:
-  typedef glm::vec3 color;
-  typedef GraphicsSystem<ENGINE> system;
-  typedef scenenode<system>      node;
+  typedef glm::vec3               color;
+  typedef GraphicsSystem<ENGINE>  system;
+  typedef typename system::shader shader;
+  typedef scenenode<system>       node;
 
 private:
   std::weak_ptr<node> mParent;
@@ -150,8 +158,10 @@ private:
   float mQuadratic;
 
 public:
-  GraphicsLight(color diff, color spec);
-  void attach(std::shared_ptr<node> parent);
+  GraphicsLight( color diff, color spec );
+  void attach( std::shared_ptr<node> parent );
+  void getUniforms( shader prog, const std::string& var );
+  glm::vec3 getPosition();
 };
 
 template<typename ENGINE>
