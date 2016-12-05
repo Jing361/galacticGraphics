@@ -24,6 +24,7 @@ private:
   
   public:
     rootnode( scenemanager* pManager ):
+      scenenode<SYSTEM>( nullptr ),
       mManager( *pManager ){
     }
     
@@ -58,7 +59,8 @@ public:
 };
 
 template<typename SYSTEM>
-scenemanager<SYSTEM>::scenemanager(){
+scenemanager<SYSTEM>::scenemanager():
+  mRoot( this ){
 }
 
 template<typename SYSTEM>
