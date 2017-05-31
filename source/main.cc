@@ -1,47 +1,54 @@
+#include<glad/glad.h>
+#include<GLFW/glfw3.h>
 #include<iostream>
-#include<string>
-#include<vector>
-#include<map>
-#include<memory>
-#include"openglsystem.hh"
+
+using namespace std;
+
+void framebuffer_size_callback( GLFWwindow* window, int width, int height ){
+  glViewport( 0, 0, width, height );
+}
+
+void processInput( GLFWwindow *window ){
+  if( glfwGetKey( window, GLFW_KEY_ESCAPE ) == GLFW_PRESS ){
+    glfwSetWindowShouldClose( window, true );
+  }
+}
 
 int main(){
-  typedef OpenGLSystem system;
-  typedef typename system::shader   shader;
-  typedef typename system::entity   entity;
-  typedef typename system::camera   camera;
-  typedef typename system::light    light;
-  typedef typename system::mesh     mesh;
-  typedef typename system::material material;
-  typedef system::meshManager       meshManager;
-  typedef system::materialManager   materialManager;
-  typedef system::scene             scenemanager;
-  typedef scenenode<system>         node;
+  glfwInit();
+  glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 3 );
+  glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
+  glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
 
-  OpenGLSystem gfx;
-  std::string mainScene = "main";
-  scenemanager& scene = gfx.getSceneManager(mainScene);
-  meshManager& meshes = gfx.getResourceManager<mesh>();
-  materialManager& mats = gfx.getResourceManager<material>();
+  GLFWwindow* window = glfwCreateWindow( 1024, 768, "Test", nullptr, nullptr );
 
-  shader shade("vertex.glsl", "fragment.glsl");
-  std::shared_ptr<node> entRoot(scene.getRootNode().createChild());
-  camera cam;
-
-  gfx.setMainScene(mainScene);
-  scene.addCamera("main", cam);
-  scene.setMainCamera("main");
-  meshes.acquire("cube", "data/cubePTN.flat");
-  mats.acquire("box", "data/container.jpg");
-  entRoot->translate(0, 3, 0);
-
-  auto ent = std::make_shared<entity>(meshes.getResource("cube"), mats.getResource("box"));
-  entRoot->attach(ent, shade);
-
-  while(gfx.getRunning()){
-    gfx.renderMainScene();
+  if( window == nullptr ){
+    cout << "glfw failure!" << endl;
+    glfwTerminate();
+    return -1;
   }
- 
+
+  glfwMakeContextCurrent( window );
+  glfwSetFramebufferSizeCallback( window, framebuffer_size_callback );
+
+  if( !gladLoadGLLoader( GLADloadproc( glfwGetProcAddress ) ) ){
+    cout << "GLAD failure" << endl;
+    return -2;
+  }
+
+  glViewport( 0, 0, 1024, 768 );
+
+  while( !glfwWindowShouldClose( window ) ){
+    processInput( window );
+
+    glClear( GL_COLOR_BUFFER_BIT );
+    glfwSwapBuffers( window );
+
+    glfwPollEvents();
+  }
+
+  glfwTerminate();
+
   return 0;
 }
 

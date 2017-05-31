@@ -54,20 +54,22 @@ endif
 SOURCES:=$(shell find $(sourcedir) -name '*$(sourceextension)')
 OBJECTS:=$(subst $(sourcedir),$(objdir), $(subst $(sourceextension),.o, $(SOURCES)))
 DEPENDS:=$(subst $(sourcedir),$(depdir), $(subst $(sourceextension),.d, $(SOURCES)))
-DIRS := $(sourcedir) $(headerdir) $(objectdir) $(objdir) $(dependdir) $(depdir) $(binarydir) $(bindir)
+CREATEDIRS:=$(objectdir) $(objdir) $(dependdir) $(depdir) $(binarydir) $(bindir)
+DIRS := $(sourcedir) $(headerdir) $(objectdir) $(objdir) $(dependdir) $(depdir) $(binarydir) $(bindir) $(librarydir)
+LIBS:=$(patsubst %,-l%,$(libraries))
 
 .SECONDARY:$(OBJECTS)
 
 # link everything together
 %/$(name):$(OBJECTS)
-	$(CC) $+ $(FLAGS) -lglfw -o $@
+	$(CC) $+ $(FLAGS) -o $@ $(LIBS)
 
 -include $(DEPENDS)
 
 # generate directories
-$(DIRS):
-	@echo Making directory: $@
-	@mkdir $@
+$(CREATEDIRS):
+	@echo Creating directories
+	-@mkdir -p $(CREATEDIRS)
 
 # more complicated dependency computation, so all prereqs listed
 # will also become command-less, prereq-less targets
@@ -77,18 +79,12 @@ $(DIRS):
 #   sed:    strip leading spaces
 #   sed:    add trailing colons
 $(objdir)/%.o:|$(DIRS)
-	$(CC) -c $(sourcedir)/$*$(sourceextension) $(FLAGS) -o $@
-	$(CC) -MM $(FLAGS) $(sourcedir)/$*$(sourceextension) > $(depdir)/$*.d
-	@mv -f $(depdir)/$*.d $(depdir)/$*.d.tmp
-	@sed -e 's|.*:|$(objdir)/$*.o:|' < $(depdir)/$*.d.tmp > $(depdir)/$*.d
-	@sed -e 's/.*://' -e 's/\\$$//' < $(depdir)/$*.d.tmp | fmt -1 | \
-	  sed -e 's/^ *//' -e 's/$$/:/' >> $(depdir)/$*.d
-	@$(RM) -f $(depdir)/$*.d.tmp
+	$(CC) -c -MMD -MP -MF $(depdir)/$*.d $(sourcedir)/$*$(sourceextension) $(FLAGS) -o $@
 
 endif
 
 clean:
-	-@$(RM) -rf $(objectdir) *.exe* $(dependdir) $(binarydir) $(name)
+	-@$(RM) -rf $(objectdir) *.o *.exe *.stackdump $(dependdir) $(binarydir) $(name) documentation/*
 
 #file partially written based on information from:
 #http://scottmcpeak.com/autodepend/autodepend.html
