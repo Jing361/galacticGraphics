@@ -39,7 +39,6 @@ public:
     mWindow = glfwCreateWindow( 1024, 768, "Test", nullptr, nullptr );
 
     if( mWindow == nullptr ){
-      glfwTerminate();
       throw glfw_exception( "Failed to initialize." );
     }
 
@@ -48,6 +47,10 @@ public:
 
     if( isResizable ){
       glfwSetFramebufferSizeCallback( mWindow, framebuffer_size_callback );
+    }
+
+    if( !gladLoadGLLoader( GLADloadproc( glfwGetProcAddress ) ) ){
+      throw glfw_exception( "Failed to initialize GLAD." );
     }
   }
 
@@ -70,11 +73,6 @@ public:
 
 int main(){
   glfw_handler gh;
-
-  if( !gladLoadGLLoader( GLADloadproc( glfwGetProcAddress ) ) ){
-    cout << "GLAD failure" << endl;
-    return -2;
-  }
 
   glViewport( 0, 0, 1024, 768 );
 
