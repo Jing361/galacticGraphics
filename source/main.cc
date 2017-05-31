@@ -1,6 +1,8 @@
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 #include<iostream>
+#include<exception>
+#include<string>
 
 using namespace std;
 
@@ -14,22 +16,60 @@ void processInput( GLFWwindow *window ){
   }
 }
 
-int main(){
-  glfwInit();
-  glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 3 );
-  glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
-  glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+class glfw_exception : public exception{
+private:
+  string mMsg;
 
-  GLFWwindow* window = glfwCreateWindow( 1024, 768, "Test", nullptr, nullptr );
+public:
+  glfw_exception( string message ):
+    mMsg( string( "GLFW error: " ) + message ){
+  }
+};
 
-  if( window == nullptr ){
-    cout << "glfw failure!" << endl;
-    glfwTerminate();
-    return -1;
+class glfw_handler{
+private:
+  GLFWwindow* mWindow;
+
+public:
+  glfw_handler( bool isResizable = true ){
+    glfwInit();
+    glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 3 );
+    glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
+
+    mWindow = glfwCreateWindow( 1024, 768, "Test", nullptr, nullptr );
+
+    if( mWindow == nullptr ){
+      glfwTerminate();
+      throw glfw_exception( "Failed to initialize." );
+    }
+
+    glfwMakeContextCurrent( mWindow );
+    glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+
+    if( isResizable ){
+      glfwSetFramebufferSizeCallback( mWindow, framebuffer_size_callback );
+    }
   }
 
-  glfwMakeContextCurrent( window );
-  glfwSetFramebufferSizeCallback( window, framebuffer_size_callback );
+  void tick(){
+    processInput( mWindow );
+
+    glfwSwapBuffers( mWindow );
+
+    glfwPollEvents();
+  }
+
+  bool shouldClose(){
+    return glfwWindowShouldClose( mWindow );
+  }
+
+  ~glfw_handler(){
+    glfwTerminate();
+  }
+};
+
+int main(){
+  glfw_handler gh;
 
   if( !gladLoadGLLoader( GLADloadproc( glfwGetProcAddress ) ) ){
     cout << "GLAD failure" << endl;
@@ -38,16 +78,11 @@ int main(){
 
   glViewport( 0, 0, 1024, 768 );
 
-  while( !glfwWindowShouldClose( window ) ){
-    processInput( window );
-
+  while( !gh.shouldClose() ){
     glClear( GL_COLOR_BUFFER_BIT );
-    glfwSwapBuffers( window );
 
-    glfwPollEvents();
+    gh.tick();
   }
-
-  glfwTerminate();
 
   return 0;
 }
