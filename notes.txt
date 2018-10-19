@@ -1,3 +1,5 @@
 http://www.realtimerendering.com/raytracing.html#books
 https://learnopengl.com/
 https://www.learnopencv.com/
+https://devblogs.nvidia.com/my-first-ray-tracing-demo/
+
