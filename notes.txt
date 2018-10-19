@@ -1,0 +1,3 @@
+http://www.realtimerendering.com/raytracing.html#books
+https://learnopengl.com/
+https://www.learnopencv.com/
